@@ -1,0 +1,11 @@
+{
+  "messageDelay": 5000,
+  "maxRetries": 3,
+  "sessionPath": "./session",
+  "defaultCountryCode": "91",
+  "maxMessagesPerDay": 200,
+  "randomDelayMin": 3,
+  "randomDelayMax": 7,
+  "enableLogging": true,
+  "logPath": "./logs"
+}
