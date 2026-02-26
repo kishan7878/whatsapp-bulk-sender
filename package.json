@@ -7,11 +7,8 @@
     "start": "electron .",
     "build": "electron-builder",
     "build:win": "electron-builder --win --x64",
-    "build:portable": "node build-portable.js",
-    "build:mac": "electron-builder --mac",
-    "build:linux": "electron-builder --linux",
-    "send-message": "node src/sender.js message",
-    "send-file": "node src/sender.js file"
+    "build:portable": "electron-builder --win portable",
+    "postinstall": "electron-builder install-app-deps"
   },
   "build": {
     "appId": "com.whatsapp.bulksender",
@@ -22,16 +19,13 @@
     "files": [
       "electron-main.js",
       "desktop/**/*",
-      "node_modules/**/*",
       "package.json"
     ],
     "win": {
       "target": [
         {
           "target": "nsis",
-          "arch": [
-            "x64"
-          ]
+          "arch": ["x64"]
         }
       ]
     },
@@ -41,17 +35,6 @@
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
       "shortcutName": "WhatsApp Bulk Sender"
-    },
-    "mac": {
-      "target": "dmg",
-      "category": "public.app-category.productivity"
-    },
-    "linux": {
-      "target": [
-        "AppImage",
-        "deb"
-      ],
-      "category": "Utility"
     }
   },
   "keywords": [
@@ -59,28 +42,16 @@
     "bulk",
     "messaging",
     "automation",
-    "whatsapp-web",
-    "bulk-sender",
-    "electron",
-    "desktop-app"
+    "electron"
   ],
   "author": "Shree Kishan Mishra",
   "license": "MIT",
   "dependencies": {
-    "whatsapp-web.js": "^1.23.0",
-    "qrcode": "^1.5.3",
-    "qrcode-terminal": "^0.12.0",
-    "csv-parser": "^3.0.0",
-    "xlsx": "^0.18.5",
-    "fs-extra": "^11.1.1",
-    "chalk": "^4.1.2",
-    "inquirer": "^8.2.5",
-    "ora": "^5.4.1"
+    "qrcode": "^1.5.3"
   },
   "devDependencies": {
     "electron": "^28.0.0",
-    "electron-builder": "^24.9.1",
-    "nodemon": "^3.0.1"
+    "electron-builder": "^24.9.1"
   },
   "engines": {
     "node": ">=16.0.0"
