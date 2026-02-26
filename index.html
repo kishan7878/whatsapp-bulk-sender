@@ -18,8 +18,8 @@
             </div>
             <div class="nav-links">
                 <a href="#features">Features</a>
-                <a href="#how-it-works">How It Works</a>
                 <a href="#download">Download</a>
+                <a href="#how-it-works">How It Works</a>
                 <a href="#faq">FAQ</a>
                 <a href="https://github.com/kishan7878/whatsapp-bulk-sender" target="_blank">
                     <i class="fab fa-github"></i> GitHub
@@ -33,18 +33,21 @@
         <div class="container">
             <div class="hero-content">
                 <h1>Send Bulk WhatsApp Messages & Files</h1>
-                <p class="hero-subtitle">Free, Open-Source, and Easy to Use</p>
+                <p class="hero-subtitle">Windows Desktop App - Free & Open Source</p>
                 <p class="hero-description">
-                    Send messages, APKs, PDFs, and images to multiple WhatsApp contacts at once. 
+                    Professional desktop application to send messages, APKs, PDFs, and images to multiple WhatsApp contacts at once. 
                     Perfect for businesses, developers, and anyone who needs to reach multiple people quickly.
                 </p>
                 <div class="hero-buttons">
-                    <a href="#download" class="btn btn-primary">
-                        <i class="fas fa-download"></i> Download Now
+                    <a href="https://github.com/kishan7878/whatsapp-bulk-sender/releases/latest" class="btn btn-primary btn-download">
+                        <i class="fab fa-windows"></i> Download for Windows
                     </a>
                     <a href="https://github.com/kishan7878/whatsapp-bulk-sender" class="btn btn-secondary" target="_blank">
                         <i class="fab fa-github"></i> View on GitHub
                     </a>
+                </div>
+                <div class="download-info">
+                    <small><i class="fas fa-download"></i> Free Download • Windows 7/8/10/11 • ~150 MB</small>
                 </div>
                 <div class="hero-stats">
                     <div class="stat">
@@ -81,6 +84,13 @@
             <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
+                        <i class="fas fa-desktop"></i>
+                    </div>
+                    <h3>Desktop Application</h3>
+                    <p>Beautiful Windows app with modern UI and easy-to-use interface</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
                         <i class="fas fa-paper-plane"></i>
                     </div>
                     <h3>Bulk Messaging</h3>
@@ -111,15 +121,87 @@
                     <div class="feature-icon">
                         <i class="fas fa-chart-line"></i>
                     </div>
-                    <h3>Delivery Tracking</h3>
+                    <h3>Real-time Tracking</h3>
                     <p>Track sent, failed, and pending messages in real-time</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-code"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Download Section -->
+    <section id="download" class="download">
+        <div class="container">
+            <h2 class="section-title">Download Now</h2>
+            
+            <div class="download-options">
+                <div class="download-option featured">
+                    <div class="platform-icon">
+                        <i class="fab fa-windows"></i>
                     </div>
-                    <h3>Open Source</h3>
-                    <p>Fully open-source and customizable to your needs</p>
+                    <h3>Windows Desktop App</h3>
+                    <p class="version">Version 1.0.0</p>
+                    <p>Professional desktop application with beautiful GUI</p>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check"></i> Easy installation wizard</li>
+                        <li><i class="fas fa-check"></i> Desktop & Start Menu shortcuts</li>
+                        <li><i class="fas fa-check"></i> Real-time progress tracking</li>
+                        <li><i class="fas fa-check"></i> Modern dark-themed interface</li>
+                    </ul>
+                    <a href="https://github.com/kishan7878/whatsapp-bulk-sender/releases/latest" class="btn btn-primary btn-large">
+                        <i class="fab fa-windows"></i> Download for Windows
+                    </a>
+                    <small class="download-size">~150 MB • Windows 7/8/10/11</small>
+                </div>
+
+                <div class="download-option">
+                    <div class="platform-icon">
+                        <i class="fab fa-github"></i>
+                    </div>
+                    <h3>Build from Source</h3>
+                    <p class="version">For Developers</p>
+                    <p>Clone and build the application yourself</p>
+                    <div class="code-block">
+                        <code>git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
+cd whatsapp-bulk-sender
+npm install
+npm run build:win</code>
+                        <button class="copy-btn" onclick="copyCode(this)">
+                            <i class="fas fa-copy"></i> Copy
+                        </button>
+                    </div>
+                    <a href="https://github.com/kishan7878/whatsapp-bulk-sender/blob/main/BUILD.md" class="btn btn-secondary" target="_blank">
+                        <i class="fas fa-book"></i> Build Guide
+                    </a>
+                </div>
+            </div>
+
+            <div class="requirements">
+                <h3>System Requirements</h3>
+                <div class="requirements-grid">
+                    <div class="requirement">
+                        <i class="fab fa-windows"></i>
+                        <strong>OS:</strong> Windows 7 or higher
+                    </div>
+                    <div class="requirement">
+                        <i class="fas fa-memory"></i>
+                        <strong>RAM:</strong> 4 GB minimum
+                    </div>
+                    <div class="requirement">
+                        <i class="fas fa-hdd"></i>
+                        <strong>Storage:</strong> 500 MB free space
+                    </div>
+                    <div class="requirement">
+                        <i class="fas fa-wifi"></i>
+                        <strong>Internet:</strong> Required
+                    </div>
+                    <div class="requirement">
+                        <i class="fab fa-whatsapp"></i>
+                        <strong>WhatsApp:</strong> Active account
+                    </div>
+                    <div class="requirement">
+                        <i class="fas fa-mobile-alt"></i>
+                        <strong>Phone:</strong> For QR scanning
+                    </div>
                 </div>
             </div>
         </div>
@@ -134,23 +216,23 @@
                     <div class="step-number">1</div>
                     <div class="step-content">
                         <h3>Download & Install</h3>
-                        <p>Clone the repository and install dependencies with npm</p>
-                        <code>git clone https://github.com/kishan7878/whatsapp-bulk-sender.git</code>
+                        <p>Download the Windows installer and run the setup wizard</p>
+                        <code>WhatsApp Bulk Sender Setup.exe</code>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">2</div>
                     <div class="step-content">
                         <h3>Scan QR Code</h3>
-                        <p>Run the app and scan the QR code with your WhatsApp</p>
-                        <code>npm start</code>
+                        <p>Open the app and scan the QR code with your WhatsApp</p>
+                        <code>Settings → Linked Devices → Link a Device</code>
                     </div>
                 </div>
                 <div class="step">
                     <div class="step-number">3</div>
                     <div class="step-content">
-                        <h3>Add Contacts</h3>
-                        <p>Import your contact list from CSV or Excel file</p>
+                        <h3>Import Contacts</h3>
+                        <p>Upload your contact list from CSV or Excel file</p>
                         <code>contacts.csv</code>
                     </div>
                 </div>
@@ -158,42 +240,9 @@
                     <div class="step-number">4</div>
                     <div class="step-content">
                         <h3>Send Messages</h3>
-                        <p>Choose your message or file and send to all contacts</p>
-                        <code>npm run send-message</code>
+                        <p>Type your message or select a file and send to all contacts</p>
+                        <code>Click "Send Messages" button</code>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Download Section -->
-    <section id="download" class="download">
-        <div class="container">
-            <h2 class="section-title">Get Started Now</h2>
-            <div class="download-content">
-                <div class="download-card">
-                    <h3><i class="fab fa-github"></i> Clone from GitHub</h3>
-                    <div class="code-block">
-                        <code>git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
-cd whatsapp-bulk-sender
-npm install
-npm start</code>
-                        <button class="copy-btn" onclick="copyCode(this)">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                    </div>
-                    <a href="https://github.com/kishan7878/whatsapp-bulk-sender" class="btn btn-primary" target="_blank">
-                        <i class="fab fa-github"></i> View Repository
-                    </a>
-                </div>
-                <div class="requirements">
-                    <h3>Requirements</h3>
-                    <ul>
-                        <li><i class="fab fa-node-js"></i> Node.js v16 or higher</li>
-                        <li><i class="fas fa-terminal"></i> npm or yarn</li>
-                        <li><i class="fab fa-whatsapp"></i> WhatsApp account</li>
-                        <li><i class="fas fa-mobile-alt"></i> Smartphone for QR scanning</li>
-                    </ul>
                 </div>
             </div>
         </div>
@@ -209,8 +258,12 @@ npm start</code>
                     <p>Yes! It's completely free and open-source. You can use, modify, and distribute it freely.</p>
                 </div>
                 <div class="faq-item">
+                    <h3><i class="fas fa-question-circle"></i> Is it safe to use?</h3>
+                    <p>Yes! Everything runs locally on your computer. No data is sent to external servers. Your WhatsApp session is secure.</p>
+                </div>
+                <div class="faq-item">
                     <h3><i class="fas fa-question-circle"></i> Will my account get banned?</h3>
-                    <p>Use responsibly with proper delays (3-5 seconds). Don't send spam or exceed 100-200 messages per day.</p>
+                    <p>Use responsibly with proper delays (5-10 seconds). Don't send spam or exceed 100-200 messages per day.</p>
                 </div>
                 <div class="faq-item">
                     <h3><i class="fas fa-question-circle"></i> What file types can I send?</h3>
@@ -221,12 +274,8 @@ npm start</code>
                     <p>There's no limit! However, we recommend batches of 100-200 per day to avoid rate limiting.</p>
                 </div>
                 <div class="faq-item">
-                    <h3><i class="fas fa-question-circle"></i> Is my data secure?</h3>
-                    <p>Yes! Everything runs locally on your machine. No data is sent to external servers.</p>
-                </div>
-                <div class="faq-item">
-                    <h3><i class="fas fa-question-circle"></i> Can I customize messages?</h3>
-                    <p>Yes! You can use templates with variables and personalize each message.</p>
+                    <h3><i class="fas fa-question-circle"></i> Does it work on Mac/Linux?</h3>
+                    <p>Currently Windows only. Mac and Linux versions are planned for future releases.</p>
                 </div>
             </div>
         </div>
@@ -238,7 +287,7 @@ npm start</code>
             <div class="footer-content">
                 <div class="footer-section">
                     <h3><i class="fab fa-whatsapp"></i> WhatsApp Bulk Sender</h3>
-                    <p>Free, open-source tool for bulk WhatsApp messaging</p>
+                    <p>Free, open-source Windows desktop app for bulk WhatsApp messaging</p>
                     <div class="social-links">
                         <a href="https://github.com/kishan7878/whatsapp-bulk-sender" target="_blank">
                             <i class="fab fa-github"></i>
@@ -249,8 +298,8 @@ npm start</code>
                     <h4>Quick Links</h4>
                     <ul>
                         <li><a href="#features">Features</a></li>
-                        <li><a href="#how-it-works">How It Works</a></li>
                         <li><a href="#download">Download</a></li>
+                        <li><a href="#how-it-works">How It Works</a></li>
                         <li><a href="#faq">FAQ</a></li>
                     </ul>
                 </div>
@@ -258,6 +307,7 @@ npm start</code>
                     <h4>Resources</h4>
                     <ul>
                         <li><a href="https://github.com/kishan7878/whatsapp-bulk-sender/blob/main/README.md" target="_blank">Documentation</a></li>
+                        <li><a href="https://github.com/kishan7878/whatsapp-bulk-sender/blob/main/BUILD.md" target="_blank">Build Guide</a></li>
                         <li><a href="https://github.com/kishan7878/whatsapp-bulk-sender/issues" target="_blank">Report Issues</a></li>
                         <li><a href="https://github.com/kishan7878/whatsapp-bulk-sender/blob/main/LICENSE" target="_blank">License</a></li>
                     </ul>
