@@ -12,28 +12,53 @@ A powerful **Windows Desktop Application** to send bulk messages, APKs, and file
 
 ---
 
-## ⚡ Quick Start
+## ⚠️ IMPORTANT: QR Code Fix
 
-### 🎯 Easiest Method (Windows):
+**If QR code shows "Waiting for QR code..."**, you need to install dependencies first!
 
-1. **Download this repository** (Click green "Code" → "Download ZIP")
-2. **Extract ZIP file**
-3. **Double-click `build.bat`**
-4. **Wait 10-15 minutes**
-5. **Install from `dist` folder**
+### Quick Fix:
 
-**📖 Detailed Guide:** [QUICK-START.md](QUICK-START.md)
+```bash
+# 1. Clone repository
+git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
+cd whatsapp-bulk-sender
+
+# 2. Install ALL dependencies (includes WhatsApp Web.js)
+npm install
+
+# 3. Build complete app
+npm run build:win
+
+# 4. Install from dist folder
+```
+
+**📖 Detailed Fix:** [FIX-QR-CODE.md](FIX-QR-CODE.md)  
+**🔧 Troubleshooting:** [TROUBLESHOOT.md](TROUBLESHOOT.md)
 
 ---
 
-## 🚀 All Build Methods
+## ⚡ Quick Start
 
-| Method | Time | Difficulty | Guide |
-|--------|------|------------|-------|
-| 🖱️ **build.bat** (Windows) | 15 min | ⭐ Easy | Just double-click! |
-| 🤖 **GitHub Actions** | 15 min | ⭐ Easy | [See below](#github-actions-build) |
-| 💻 **Command Line** | 15 min | ⭐⭐ Medium | [BUILD.md](BUILD.md) |
-| 📦 **Portable Version** | 15 min | ⭐⭐ Medium | `npm run build:portable` |
+### 🎯 Complete Installation (Recommended):
+
+```bash
+# Clone repository
+git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
+cd whatsapp-bulk-sender
+
+# Install dependencies (IMPORTANT!)
+npm install
+
+# Test WhatsApp connection (optional)
+node standalone-whatsapp.js
+
+# Build app
+npm run build:win
+
+# Install from dist folder
+```
+
+**Output:** `dist/WhatsApp Bulk Sender Setup 1.0.0.exe`
 
 ---
 
@@ -50,24 +75,10 @@ A powerful **Windows Desktop Application** to send bulk messages, APKs, and file
 
 ---
 
-## 📥 Download & Install
+## 📥 Installation Methods
 
-### Option 1: Pre-built Installer (Coming Soon)
+### Method 1: Complete Build (RECOMMENDED)
 
-Download from [GitHub Releases](https://github.com/kishan7878/whatsapp-bulk-sender/releases)
-
-### Option 2: Build Yourself
-
-#### Windows (Easiest):
-```bash
-# Just double-click build.bat file!
-# Or use command line:
-git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
-cd whatsapp-bulk-sender
-build.bat
-```
-
-#### Command Line:
 ```bash
 git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
 cd whatsapp-bulk-sender
@@ -75,14 +86,21 @@ npm install
 npm run build:win
 ```
 
-**Output:** `dist/WhatsApp Bulk Sender Setup 1.0.0.exe`
+### Method 2: Quick Dependency Install
 
-### Option 3: GitHub Actions Build
+```bash
+# If you already have the source
+cd whatsapp-bulk-sender
+install-dependencies.bat
+npm run build:win
+```
 
-1. Go to [Actions](https://github.com/kishan7878/whatsapp-bulk-sender/actions)
-2. Click "Build Windows App"
-3. Click "Run workflow"
-4. Download artifact after completion
+### Method 3: One-Click Build
+
+```bash
+# Just double-click
+build.bat
+```
 
 ---
 
@@ -92,9 +110,10 @@ npm run build:win
 
 1. **Install the app** from the `.exe` file
 2. **Launch** from Start Menu or Desktop
-3. **Scan QR code** with WhatsApp mobile app
-4. **Import contacts** from CSV file
-5. **Send messages or files!**
+3. **Wait for QR code** (10-30 seconds)
+4. **Scan QR code** with WhatsApp mobile app
+5. **Import contacts** from CSV file
+6. **Send messages or files!**
 
 ### CSV Format:
 
@@ -111,25 +130,62 @@ phone
 
 ---
 
+## 🐛 Troubleshooting
+
+### QR Code Not Showing?
+
+**Problem:** Shows "Waiting for QR code..."
+
+**Solution:**
+```bash
+# Install dependencies
+npm install whatsapp-web.js qrcode qrcode-terminal
+
+# Rebuild
+npm run build:win
+```
+
+**📖 Full Guide:** [FIX-QR-CODE.md](FIX-QR-CODE.md)
+
+### Build Fails?
+
+```bash
+# Clean install
+rm -rf node_modules dist
+npm cache clean --force
+npm install
+npm run build:win
+```
+
+### Test Connection First:
+
+```bash
+# Run standalone test
+node standalone-whatsapp.js
+```
+
+If QR code appears in terminal → Dependencies working!
+
+**📖 More Help:** [TROUBLESHOOT.md](TROUBLESHOOT.md)
+
+---
+
 ## 📁 Project Structure
 
 ```
 whatsapp-bulk-sender/
-├── desktop/              # Desktop app UI
-│   ├── index.html       # Main interface
-│   ├── style.css        # Styling
-│   └── renderer.js      # Frontend logic
-├── src/                 # CLI source
-│   ├── index.js         # WhatsApp client
-│   ├── sender.js        # Bulk sending
-│   └── utils.js         # Utilities
-├── electron-main.js     # Electron main process
-├── build.bat           # Windows build script
-├── package.json        # Dependencies
-├── QUICK-START.md      # Quick start guide
-├── BUILD.md           # Detailed build guide
-├── INSTALL.md         # Installation guide
-└── README.md          # This file
+├── desktop/                    # Desktop app UI
+│   ├── index.html             # Main interface
+│   ├── style.css              # Styling
+│   └── renderer.js            # Frontend logic
+├── electron-main.js           # Electron main process
+├── standalone-whatsapp.js     # Test script
+├── install-dependencies.bat   # Dependency installer
+├── build.bat                  # Build script
+├── package.json               # Dependencies
+├── FIX-QR-CODE.md            # QR code fix guide
+├── TROUBLESHOOT.md           # Troubleshooting guide
+└── README.md                 # This file
 ```
 
 ---
@@ -162,12 +218,10 @@ Edit `config.json`:
 - Monitor delivery rates
 - Don't send spam
 
-### Best Practices
-- ✅ Get consent before sending
-- ✅ Use meaningful messages
-- ✅ Test with small groups first
-- ❌ Don't send spam
-- ❌ Don't exceed rate limits
+### Dependencies
+- **whatsapp-web.js** - Required for WhatsApp connectivity
+- **puppeteer** - Auto-installed with whatsapp-web.js (~100MB)
+- **qrcode** - QR code generation
 
 ---
 
@@ -189,11 +243,8 @@ npm run build:win
 # Portable version (no install)
 npm run build:portable
 
-# Mac (on Mac only)
-npm run build:mac
-
-# Linux
-npm run build:linux
+# Test WhatsApp connection
+node standalone-whatsapp.js
 ```
 
 ---
@@ -202,29 +253,20 @@ npm run build:linux
 
 - **Quick Start:** [QUICK-START.md](QUICK-START.md)
 - **Build Guide:** [BUILD.md](BUILD.md)
-- **Installation:** [INSTALL.md](INSTALL.md)
+- **QR Code Fix:** [FIX-QR-CODE.md](FIX-QR-CODE.md)
+- **Troubleshooting:** [TROUBLESHOOT.md](TROUBLESHOOT.md)
 - **Website:** https://kishan7878.github.io/whatsapp-bulk-sender/
 
 ---
 
-## 🐛 Troubleshooting
+## 📊 Build Size
 
-### QR Code not showing?
-- Check internet connection
-- Restart the app
+| Version | Size | Features |
+|---------|------|----------|
+| Without dependencies | ~100 MB | ❌ QR code doesn't work |
+| With dependencies | ~200 MB | ✅ Full functionality |
 
-### Messages not sending?
-- Verify phone numbers have country codes
-- Check delays are set properly
-
-### Build fails?
-```bash
-rm -rf node_modules
-npm install
-npm run build:win
-```
-
-**More help:** [BUILD.md](BUILD.md#troubleshooting)
+**Recommended:** Build with dependencies for full functionality!
 
 ---
 
@@ -252,18 +294,18 @@ See [LICENSE](LICENSE) file for details.
 
 - **Electron** - Desktop framework
 - **whatsapp-web.js** - WhatsApp API
+- **Puppeteer** - Browser automation
 - **Node.js** - Runtime
 - **qrcode** - QR generation
-- **csv-parser** - CSV parsing
-- **xlsx** - Excel support
 
 ---
 
 ## 📞 Support
 
-- **Issues:** https://github.com/kishan7878/whatsapp-bulk-sender/issues
+- **QR Code Issues:** [FIX-QR-CODE.md](FIX-QR-CODE.md)
+- **General Issues:** [TROUBLESHOOT.md](TROUBLESHOOT.md)
+- **GitHub Issues:** https://github.com/kishan7878/whatsapp-bulk-sender/issues
 - **Discussions:** https://github.com/kishan7878/whatsapp-bulk-sender/discussions
-- **Website:** https://kishan7878.github.io/whatsapp-bulk-sender/
 
 ---
 
@@ -273,14 +315,13 @@ See [LICENSE](LICENSE) file for details.
 - [x] Bulk messaging
 - [x] Bulk file sending
 - [x] CSV import
-- [x] One-click build script
-- [ ] Pre-built installers
-- [ ] Excel multi-column import
+- [x] QR code authentication
+- [x] Standalone test script
+- [ ] Pre-built installers with dependencies
+- [ ] Auto-update
 - [ ] Message templates
 - [ ] Scheduled sending
-- [ ] Analytics dashboard
 - [ ] Mac & Linux versions
-- [ ] Auto-update
 
 ---
 
