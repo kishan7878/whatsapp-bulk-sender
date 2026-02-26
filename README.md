@@ -8,7 +8,34 @@ A powerful **Windows Desktop Application** to send bulk messages, APKs, and file
 
 ## 🌐 Website
 
-**Live Demo & Download:** https://kishan7878.github.io/whatsapp-bulk-sender/
+**Live Demo:** https://kishan7878.github.io/whatsapp-bulk-sender/
+
+---
+
+## ⚡ Quick Start
+
+### 🎯 Easiest Method (Windows):
+
+1. **Download this repository** (Click green "Code" → "Download ZIP")
+2. **Extract ZIP file**
+3. **Double-click `build.bat`**
+4. **Wait 10-15 minutes**
+5. **Install from `dist` folder**
+
+**📖 Detailed Guide:** [QUICK-START.md](QUICK-START.md)
+
+---
+
+## 🚀 All Build Methods
+
+| Method | Time | Difficulty | Guide |
+|--------|------|------------|-------|
+| 🖱️ **build.bat** (Windows) | 15 min | ⭐ Easy | Just double-click! |
+| 🤖 **GitHub Actions** | 15 min | ⭐ Easy | [See below](#github-actions-build) |
+| 💻 **Command Line** | 15 min | ⭐⭐ Medium | [BUILD.md](BUILD.md) |
+| 📦 **Portable Version** | 15 min | ⭐⭐ Medium | `npm run build:portable` |
+
+---
 
 ## ✨ Features
 
@@ -21,84 +48,55 @@ A powerful **Windows Desktop Application** to send bulk messages, APKs, and file
 - 🔐 **100% Secure** - Everything runs locally on your machine
 - 🆓 **Free & Open Source** - No hidden costs or subscriptions
 
-## 🖥️ Windows Desktop App
+---
 
-### Download & Install
+## 📥 Download & Install
 
-1. **Download the installer:**
-   - Visit: https://kishan7878.github.io/whatsapp-bulk-sender/
-   - Click "Download for Windows"
-   - Or download from [GitHub Releases](https://github.com/kishan7878/whatsapp-bulk-sender/releases)
+### Option 1: Pre-built Installer (Coming Soon)
 
-2. **Install:**
-   - Run `WhatsApp Bulk Sender Setup.exe`
-   - Follow the installation wizard
-   - Launch from Start Menu or Desktop shortcut
+Download from [GitHub Releases](https://github.com/kishan7878/whatsapp-bulk-sender/releases)
 
-3. **First Time Setup:**
-   - Open the app
-   - Scan QR code with WhatsApp mobile app
-   - Start sending!
+### Option 2: Build Yourself
 
-### Screenshots
-
-**Dashboard:**
-- Clean, modern interface
-- Real-time connection status
-- Statistics and analytics
-
-**Send Messages:**
-- Import contacts from CSV
-- Type your message
-- Set delay and send
-
-**Send Files:**
-- Select any file (APK, PDF, images)
-- Add optional caption
-- Bulk send to all contacts
-
-## 🚀 Quick Start (Command Line)
-
-If you prefer command line or want to build from source:
-
-### Prerequisites
-
-- Node.js (v16 or higher)
-- npm or yarn
-- WhatsApp account
-
-### Installation
-
+#### Windows (Easiest):
 ```bash
-# Clone the repository
+# Just double-click build.bat file!
+# Or use command line:
 git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
-
-# Navigate to project directory
 cd whatsapp-bulk-sender
+build.bat
+```
 
-# Install dependencies
+#### Command Line:
+```bash
+git clone https://github.com/kishan7878/whatsapp-bulk-sender.git
+cd whatsapp-bulk-sender
 npm install
+npm run build:win
 ```
 
-### Usage
+**Output:** `dist/WhatsApp Bulk Sender Setup 1.0.0.exe`
 
-**Desktop App:**
-```bash
-npm start
-```
+### Option 3: GitHub Actions Build
 
-**Command Line:**
-```bash
-# Send bulk messages
-npm run send-message
+1. Go to [Actions](https://github.com/kishan7878/whatsapp-bulk-sender/actions)
+2. Click "Build Windows App"
+3. Click "Run workflow"
+4. Download artifact after completion
 
-# Send bulk files
-npm run send-file
-```
+---
 
-## 📋 CSV Format
+## 🎯 Usage
 
-Create a `contacts.csv` file with phone numbers:
+### First Time Setup:
+
+1. **Install the app** from the `.exe` file
+2. **Launch** from Start Menu or Desktop
+3. **Scan QR code** with WhatsApp mobile app
+4. **Import contacts** from CSV file
+5. **Send messages or files!**
+
+### CSV Format:
 
 ```csv
 phone
@@ -109,146 +107,157 @@ phone
 
 **Important:**
 - Include country code (e.g., 91 for India)
-- One number per line
-- Column name should be `phone` or `number`
+- Column name: `phone` or `number`
 
-## 🏗️ Build from Source
-
-Want to build the Windows app yourself?
-
-```bash
-# Install dependencies
-npm install
-
-# Build for Windows
-npm run build:win
-```
-
-Output: `dist/WhatsApp Bulk Sender Setup 1.0.0.exe`
-
-**Detailed build guide:** See [BUILD.md](BUILD.md)
+---
 
 ## 📁 Project Structure
 
 ```
 whatsapp-bulk-sender/
-├── desktop/              # Desktop app UI files
-│   ├── index.html       # Main app interface
-│   ├── style.css        # App styling
+├── desktop/              # Desktop app UI
+│   ├── index.html       # Main interface
+│   ├── style.css        # Styling
 │   └── renderer.js      # Frontend logic
-├── src/                 # CLI source files
+├── src/                 # CLI source
 │   ├── index.js         # WhatsApp client
-│   ├── sender.js        # Bulk sending logic
-│   └── utils.js         # Utility functions
+│   ├── sender.js        # Bulk sending
+│   └── utils.js         # Utilities
 ├── electron-main.js     # Electron main process
-├── package.json         # Dependencies & scripts
-├── BUILD.md            # Build instructions
-└── README.md           # This file
+├── build.bat           # Windows build script
+├── package.json        # Dependencies
+├── QUICK-START.md      # Quick start guide
+├── BUILD.md           # Detailed build guide
+├── INSTALL.md         # Installation guide
+└── README.md          # This file
 ```
+
+---
 
 ## ⚙️ Configuration
 
-Edit `config.json` to customize:
+Edit `config.json`:
 
 ```json
 {
-  "messageDelay": 5000,        // Delay between messages (ms)
-  "maxRetries": 3,             // Retry failed messages
-  "defaultCountryCode": "91",  // Default country code
-  "maxMessagesPerDay": 200     // Daily limit
+  "messageDelay": 5000,
+  "maxRetries": 3,
+  "defaultCountryCode": "91",
+  "maxMessagesPerDay": 200
 }
 ```
+
+---
 
 ## ⚠️ Important Notes
 
 ### Rate Limiting
 - **Recommended delay:** 5-10 seconds between messages
-- **Daily limit:** Don't exceed 100-200 messages per day
-- **Use responsibly:** Only send to people who have consented
+- **Daily limit:** 100-200 messages per day
+- **Use responsibly:** Only send to consenting contacts
 
 ### Account Safety
-- WhatsApp may temporarily ban your number if you send too many messages
 - Start with small batches (10-20 contacts)
-- Gradually increase as you test
 - Use proper delays
+- Monitor delivery rates
+- Don't send spam
 
 ### Best Practices
 - ✅ Get consent before sending
-- ✅ Use meaningful, non-spam messages
+- ✅ Use meaningful messages
 - ✅ Test with small groups first
-- ✅ Monitor delivery rates
 - ❌ Don't send spam
 - ❌ Don't exceed rate limits
-- ❌ Don't use for illegal purposes
 
-## 🛠️ Advanced Features
+---
 
-### Custom Message Templates
+## 🛠️ Development
 
-```javascript
-const template = "Hello {name}, your order {orderId} is ready!";
+### Run in Development Mode:
+
+```bash
+npm install
+npm start
 ```
 
-### Scheduled Sending
+### Build Options:
 
-```javascript
-scheduleSend(phoneNumber, message, scheduledTime);
+```bash
+# Windows installer
+npm run build:win
+
+# Portable version (no install)
+npm run build:portable
+
+# Mac (on Mac only)
+npm run build:mac
+
+# Linux
+npm run build:linux
 ```
 
-### Variable Replacement
+---
 
-Import CSV with multiple columns:
-```csv
-phone,name,orderId
-919876543210,John,12345
-918765432109,Jane,12346
-```
+## 📖 Documentation
 
-## 🤝 Contributing
+- **Quick Start:** [QUICK-START.md](QUICK-START.md)
+- **Build Guide:** [BUILD.md](BUILD.md)
+- **Installation:** [INSTALL.md](INSTALL.md)
+- **Website:** https://kishan7878.github.io/whatsapp-bulk-sender/
 
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-MIT License - feel free to use this project for personal or commercial purposes.
-
-See [LICENSE](LICENSE) file for details.
-
-## ⚡ Tech Stack
-
-- **Electron** - Desktop app framework
-- **whatsapp-web.js** - WhatsApp Web API wrapper
-- **Node.js** - Runtime environment
-- **qrcode** - QR code generation
-- **csv-parser** - CSV file parsing
-- **xlsx** - Excel file support
+---
 
 ## 🐛 Troubleshooting
 
 ### QR Code not showing?
 - Check internet connection
 - Restart the app
-- Try a different terminal/app
 
 ### Messages not sending?
 - Verify phone numbers have country codes
-- Check WhatsApp Web is connected
-- Ensure proper delays are set
-
-### Session expired?
-- Delete session folder
-- Restart app and scan QR code again
+- Check delays are set properly
 
 ### Build fails?
-- Make sure Node.js v16+ is installed
-- Delete `node_modules` and run `npm install`
-- Check [BUILD.md](BUILD.md) for detailed troubleshooting
+```bash
+rm -rf node_modules
+npm install
+npm run build:win
+```
+
+**More help:** [BUILD.md](BUILD.md#troubleshooting)
+
+---
+
+## 🤝 Contributing
+
+Contributions welcome! Please:
+
+1. Fork the repository
+2. Create feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit changes (`git commit -m 'Add AmazingFeature'`)
+4. Push to branch (`git push origin feature/AmazingFeature`)
+5. Open Pull Request
+
+---
+
+## 📄 License
+
+MIT License - Free for personal and commercial use.
+
+See [LICENSE](LICENSE) file for details.
+
+---
+
+## ⚡ Tech Stack
+
+- **Electron** - Desktop framework
+- **whatsapp-web.js** - WhatsApp API
+- **Node.js** - Runtime
+- **qrcode** - QR generation
+- **csv-parser** - CSV parsing
+- **xlsx** - Excel support
+
+---
 
 ## 📞 Support
 
@@ -256,48 +265,34 @@ See [LICENSE](LICENSE) file for details.
 - **Discussions:** https://github.com/kishan7878/whatsapp-bulk-sender/discussions
 - **Website:** https://kishan7878.github.io/whatsapp-bulk-sender/
 
+---
+
 ## 🎯 Roadmap
 
 - [x] Windows Desktop App
-- [x] Bulk message sending
+- [x] Bulk messaging
 - [x] Bulk file sending
 - [x] CSV import
-- [ ] Excel import with multiple columns
+- [x] One-click build script
+- [ ] Pre-built installers
+- [ ] Excel multi-column import
 - [ ] Message templates
 - [ ] Scheduled sending
-- [ ] Contact groups
-- [ ] Send history
 - [ ] Analytics dashboard
 - [ ] Mac & Linux versions
-- [ ] Auto-update feature
-
-## ⭐ Star this repo if you find it useful!
-
-## 📸 Screenshots
-
-### Desktop App Interface
-- Modern, dark-themed UI
-- Easy-to-use navigation
-- Real-time progress tracking
-- Beautiful QR code scanner
-
-### Features in Action
-- Import contacts with one click
-- Type message and send
-- Track delivery in real-time
-- View statistics and history
+- [ ] Auto-update
 
 ---
 
-**Disclaimer:** This tool is for educational purposes. Use responsibly and in accordance with WhatsApp's Terms of Service. The developers are not responsible for any misuse of this tool.
-
-**Made with ❤️ by Shree Kishan Mishra**
-
----
-
-## 🌟 Show Your Support
+## ⭐ Show Your Support
 
 Give a ⭐️ if this project helped you!
 
 [![GitHub stars](https://img.shields.io/github/stars/kishan7878/whatsapp-bulk-sender?style=social)](https://github.com/kishan7878/whatsapp-bulk-sender/stargazers)
 [![GitHub forks](https://img.shields.io/github/forks/kishan7878/whatsapp-bulk-sender?style=social)](https://github.com/kishan7878/whatsapp-bulk-sender/network/members)
+
+---
+
+**Disclaimer:** This tool is for educational purposes. Use responsibly and in accordance with WhatsApp's Terms of Service.
+
+**Made with ❤️ by Shree Kishan Mishra**
