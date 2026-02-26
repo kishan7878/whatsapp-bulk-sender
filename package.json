@@ -1,0 +1,42 @@
+{
+  "name": "whatsapp-bulk-sender",
+  "version": "1.0.0",
+  "description": "WhatsApp Bulk Messaging Tool - Send messages, APKs, and files to multiple contacts",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "send-message": "node src/sender.js message",
+    "send-file": "node src/sender.js file",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "whatsapp",
+    "bulk",
+    "messaging",
+    "automation",
+    "whatsapp-web",
+    "bulk-sender"
+  ],
+  "author": "Shree Kishan Mishra",
+  "license": "MIT",
+  "dependencies": {
+    "whatsapp-web.js": "^1.23.0",
+    "qrcode-terminal": "^0.12.0",
+    "csv-parser": "^3.0.0",
+    "xlsx": "^0.18.5",
+    "fs-extra": "^11.1.1",
+    "chalk": "^4.1.2",
+    "inquirer": "^8.2.5",
+    "ora": "^5.4.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kishan7878/whatsapp-bulk-sender.git"
+  }
+}
