@@ -1,245 +1,460 @@
 const { ipcRenderer } = require('electron');
 const QRCode = require('qrcode');
 
-let csvFilePath = null;
-let csvFilePathFile = null;
-let selectedFilePath = null;
-let contacts = [];
-let contactsFile = [];
+// State management
+let whatsappClient = null;
+let isConnected = false;
+let currentView = 'dashboard';
+let messageHistory = [];
 
-// Tab switching
-document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', (e) => {
-        e.preventDefault();
-        const tab = item.dataset.tab;
-        switchTab(tab);
-    });
+// Initialize app
+document.addEventListener('DOMContentLoaded', () => {
+    initializeNavigation();
+    initializeWhatsApp();
+    updateStats();
 });
 
-function switchTab(tabName) {
-    // Update nav items
+// Navigation
+function initializeNavigation() {
+    const navItems = document.querySelectorAll('.nav-item');
+    navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            e.preventDefault();
+            const view = item.dataset.view;
+            switchView(view);
+        });
+    });
+}
+
+function switchView(view) {
+    // Hide all views
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    
+    // Show selected view
+    document.getElementById(`${view}-view`).classList.add('active');
+    
+    // Update nav
     document.querySelectorAll('.nav-item').forEach(item => {
         item.classList.remove('active');
+        if (item.dataset.view === view) {
+            item.classList.add('active');
+        }
     });
-    document.querySelector(`[data-tab="${tabName}"]`).classList.add('active');
-
-    // Update tab content
-    document.querySelectorAll('.tab-content').forEach(content => {
-        content.classList.remove('active');
-    });
-    document.getElementById(tabName).classList.add('active');
-
-    // Update page title
-    const titles = {
-        'dashboard': 'Dashboard',
-        'send-message': 'Send Messages',
-        'send-file': 'Send Files',
-        'history': 'History',
-        'settings': 'Settings'
-    };
-    document.getElementById('pageTitle').textContent = titles[tabName];
+    
+    currentView = view;
 }
 
-// QR Code handling
-ipcRenderer.on('qr-code', async (event, qr) => {
-    const qrCodeDiv = document.getElementById('qrCode');
-    qrCodeDiv.innerHTML = '';
+// WhatsApp Integration
+async function initializeWhatsApp() {
+    updateConnectionStatus('Initializing WhatsApp...');
     
     try {
+        // Use whatsapp-web.js via CDN or bundled version
+        const { Client, LocalAuth } = require('whatsapp-web.js');
+        
+        whatsappClient = new Client({
+            authStrategy: new LocalAuth(),
+            puppeteer: {
+                headless: true,
+                args: ['--no-sandbox', '--disable-setuid-sandbox']
+            }
+        });
+
+        // QR Code event
+        whatsappClient.on('qr', async (qr) => {
+            console.log('QR Code received:', qr);
+            updateConnectionStatus('Scan QR Code');
+            await displayQRCode(qr);
+        });
+
+        // Ready event
+        whatsappClient.on('ready', () => {
+            console.log('WhatsApp client is ready!');
+            isConnected = true;
+            updateConnectionStatus('Connected');
+            hideQRCode();
+            showSuccessMessage('WhatsApp connected successfully!');
+        });
+
+        // Authenticated event
+        whatsappClient.on('authenticated', () => {
+            console.log('WhatsApp authenticated');
+            updateConnectionStatus('Authenticated');
+        });
+
+        // Disconnected event
+        whatsappClient.on('disconnected', (reason) => {
+            console.log('WhatsApp disconnected:', reason);
+            isConnected = false;
+            updateConnectionStatus('Disconnected');
+            showErrorMessage('WhatsApp disconnected. Please reconnect.');
+        });
+
+        // Initialize client
+        await whatsappClient.initialize();
+        
+    } catch (error) {
+        console.error('WhatsApp initialization error:', error);
+        updateConnectionStatus('Connection Failed');
+        showErrorMessage('Failed to initialize WhatsApp: ' + error.message);
+        
+        // Fallback: Show demo QR code
+        showDemoQRCode();
+    }
+}
+
+async function displayQRCode(qrData) {
+    try {
+        const qrContainer = document.getElementById('qr-code');
         const canvas = document.createElement('canvas');
-        await QRCode.toCanvas(canvas, qr, { width: 300 });
-        qrCodeDiv.appendChild(canvas);
+        
+        await QRCode.toCanvas(canvas, qrData, {
+            width: 300,
+            margin: 2,
+            color: {
+                dark: '#000000',
+                light: '#ffffff'
+            }
+        });
+        
+        qrContainer.innerHTML = '';
+        qrContainer.appendChild(canvas);
+        
+        // Update status
+        document.querySelector('.qr-status').textContent = 'Scan this QR code with WhatsApp';
+        
     } catch (error) {
-        console.error('Error generating QR code:', error);
-        qrCodeDiv.innerHTML = '<p>Error generating QR code</p>';
+        console.error('QR Code display error:', error);
+        showErrorMessage('Failed to display QR code');
     }
-});
-
-// Status updates
-ipcRenderer.on('status', (event, status) => {
-    const statusDot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
-    const qrSection = document.getElementById('qrSection');
-    const dashboardContent = document.getElementById('dashboardContent');
-
-    switch (status) {
-        case 'authenticated':
-            statusText.textContent = 'Authenticated';
-            statusDot.className = 'status-dot';
-            break;
-        case 'ready':
-            statusText.textContent = 'Connected';
-            statusDot.className = 'status-dot connected';
-            qrSection.style.display = 'none';
-            dashboardContent.style.display = 'block';
-            break;
-        case 'auth_failure':
-            statusText.textContent = 'Authentication Failed';
-            statusDot.className = 'status-dot disconnected';
-            break;
-        case 'disconnected':
-            statusText.textContent = 'Disconnected';
-            statusDot.className = 'status-dot disconnected';
-            qrSection.style.display = 'flex';
-            dashboardContent.style.display = 'none';
-            break;
-    }
-});
-
-// CSV file selection for messages
-document.getElementById('selectCsvBtn').addEventListener('click', async () => {
-    csvFilePath = await ipcRenderer.invoke('select-csv-file');
-    if (csvFilePath) {
-        document.getElementById('csvFileName').textContent = csvFilePath.split(/[\\/]/).pop();
-        contacts = await ipcRenderer.invoke('parse-csv', csvFilePath);
-        
-        document.getElementById('contactsPreview').style.display = 'block';
-        document.getElementById('contactCount').textContent = contacts.length;
-        document.getElementById('contactsList').innerHTML = contacts.slice(0, 10).map(c => c.phone).join(', ') + 
-            (contacts.length > 10 ? '...' : '');
-        
-        updateSendButton();
-    }
-});
-
-// CSV file selection for files
-document.getElementById('selectCsvBtnFile').addEventListener('click', async () => {
-    csvFilePathFile = await ipcRenderer.invoke('select-csv-file');
-    if (csvFilePathFile) {
-        document.getElementById('csvFileNameFile').textContent = csvFilePathFile.split(/[\\/]/).pop();
-        contactsFile = await ipcRenderer.invoke('parse-csv', csvFilePathFile);
-        updateSendFileButton();
-    }
-});
-
-// File selection
-document.getElementById('selectFileBtn').addEventListener('click', async () => {
-    selectedFilePath = await ipcRenderer.invoke('select-file');
-    if (selectedFilePath) {
-        document.getElementById('selectedFileName').textContent = selectedFilePath.split(/[\\/]/).pop();
-        updateSendFileButton();
-    }
-});
-
-// Character count
-document.getElementById('messageText').addEventListener('input', (e) => {
-    document.getElementById('charCount').textContent = e.target.value.length + ' characters';
-    updateSendButton();
-});
-
-function updateSendButton() {
-    const message = document.getElementById('messageText').value.trim();
-    const btn = document.getElementById('sendMessagesBtn');
-    btn.disabled = !(csvFilePath && contacts.length > 0 && message.length > 0);
 }
 
-function updateSendFileButton() {
-    const btn = document.getElementById('sendFilesBtn');
-    btn.disabled = !(csvFilePathFile && contactsFile.length > 0 && selectedFilePath);
+function showDemoQRCode() {
+    // Show a demo QR code with instructions
+    const qrContainer = document.getElementById('qr-code');
+    qrContainer.innerHTML = `
+        <div style="padding: 20px; text-align: center;">
+            <div style="font-size: 48px; margin-bottom: 20px;">📱</div>
+            <h3 style="color: #25D366; margin-bottom: 10px;">WhatsApp Web.js Required</h3>
+            <p style="color: #7f8c8d; margin-bottom: 20px;">
+                To use this feature, you need to install WhatsApp Web.js library.
+            </p>
+            <div style="background: #2c3e50; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                <code style="color: #25D366; font-size: 14px;">
+                    npm install whatsapp-web.js
+                </code>
+            </div>
+            <p style="color: #95a5a6; font-size: 12px;">
+                After installation, restart the application.
+            </p>
+        </div>
+    `;
+    
+    document.querySelector('.qr-status').textContent = 'Installation Required';
 }
 
-// Send messages
-document.getElementById('sendMessagesBtn').addEventListener('click', async () => {
-    const message = document.getElementById('messageText').value.trim();
-    const delay = parseInt(document.getElementById('messageDelay').value);
+function hideQRCode() {
+    const qrContainer = document.getElementById('qr-code');
+    qrContainer.innerHTML = `
+        <div style="text-align: center; padding: 40px;">
+            <i class="fas fa-check-circle" style="font-size: 64px; color: #25D366;"></i>
+            <h3 style="color: #25D366; margin-top: 20px;">Connected!</h3>
+            <p style="color: #7f8c8d;">WhatsApp is ready to use</p>
+        </div>
+    `;
+}
 
-    if (!message || contacts.length === 0) return;
+function updateConnectionStatus(status) {
+    const statusElement = document.querySelector('.connection-status');
+    if (statusElement) {
+        statusElement.textContent = status;
+        
+        // Update color based on status
+        if (status.includes('Connected')) {
+            statusElement.style.color = '#25D366';
+        } else if (status.includes('Failed') || status.includes('Disconnected')) {
+            statusElement.style.color = '#e74c3c';
+        } else {
+            statusElement.style.color = '#f39c12';
+        }
+    }
+}
 
-    const progressCard = document.getElementById('messageProgress');
-    const progressBar = document.getElementById('messageProgressBar');
-    const log = document.getElementById('messageLog');
-    
-    progressCard.style.display = 'block';
-    log.innerHTML = '';
-    
-    document.getElementById('sendMessagesBtn').disabled = true;
+// Message Sending
+async function sendBulkMessages() {
+    if (!isConnected) {
+        showErrorMessage('Please connect WhatsApp first!');
+        return;
+    }
+
+    const messageText = document.getElementById('message-text').value;
+    const fileInput = document.getElementById('contacts-file');
+    const delay = parseInt(document.getElementById('message-delay').value) || 5000;
+
+    if (!messageText) {
+        showErrorMessage('Please enter a message');
+        return;
+    }
+
+    if (!fileInput.files[0]) {
+        showErrorMessage('Please select a contacts file');
+        return;
+    }
 
     try {
-        const result = await ipcRenderer.invoke('send-bulk-messages', {
-            contacts,
-            message,
-            delay
-        });
+        const contacts = await parseContactsFile(fileInput.files[0]);
+        
+        if (contacts.length === 0) {
+            showErrorMessage('No valid contacts found in file');
+            return;
+        }
 
-        log.innerHTML += `<div class="log-entry success">✅ Completed! Sent: ${result.sent}, Failed: ${result.failed}</div>`;
-        
-        // Update stats
-        document.getElementById('totalSent').textContent = parseInt(document.getElementById('totalSent').textContent) + result.sent;
-        
+        // Show progress
+        showProgress('Sending messages...', 0, contacts.length);
+
+        let sent = 0;
+        let failed = 0;
+
+        for (let i = 0; i < contacts.length; i++) {
+            try {
+                const number = formatPhoneNumber(contacts[i]);
+                await whatsappClient.sendMessage(number, messageText);
+                sent++;
+                
+                // Update progress
+                showProgress(`Sending messages... (${sent}/${contacts.length})`, sent, contacts.length);
+                
+                // Log to history
+                addToHistory('message', number, 'success');
+                
+                // Delay before next message
+                if (i < contacts.length - 1) {
+                    await sleep(delay);
+                }
+                
+            } catch (error) {
+                console.error('Failed to send to:', contacts[i], error);
+                failed++;
+                addToHistory('message', contacts[i], 'failed');
+            }
+        }
+
+        hideProgress();
+        showSuccessMessage(`Messages sent! Success: ${sent}, Failed: ${failed}`);
+        updateStats();
+
     } catch (error) {
-        log.innerHTML += `<div class="log-entry failed">❌ Error: ${error.message}</div>`;
-    } finally {
-        document.getElementById('sendMessagesBtn').disabled = false;
+        hideProgress();
+        showErrorMessage('Error sending messages: ' + error.message);
     }
-});
+}
 
-// Send files
-document.getElementById('sendFilesBtn').addEventListener('click', async () => {
-    const caption = document.getElementById('fileCaption').value.trim();
-    const delay = parseInt(document.getElementById('fileDelay').value);
+// File Sending
+async function sendBulkFiles() {
+    if (!isConnected) {
+        showErrorMessage('Please connect WhatsApp first!');
+        return;
+    }
 
-    if (!selectedFilePath || contactsFile.length === 0) return;
+    const fileInput = document.getElementById('file-to-send');
+    const contactsInput = document.getElementById('file-contacts');
+    const delay = parseInt(document.getElementById('file-delay').value) || 5000;
 
-    const progressCard = document.getElementById('fileProgress');
-    const progressBar = document.getElementById('fileProgressBar');
-    const log = document.getElementById('fileLog');
-    
-    progressCard.style.display = 'block';
-    log.innerHTML = '';
-    
-    document.getElementById('sendFilesBtn').disabled = true;
+    if (!fileInput.files[0]) {
+        showErrorMessage('Please select a file to send');
+        return;
+    }
+
+    if (!contactsInput.files[0]) {
+        showErrorMessage('Please select a contacts file');
+        return;
+    }
 
     try {
-        const result = await ipcRenderer.invoke('send-bulk-files', {
-            contacts: contactsFile,
-            filePath: selectedFilePath,
-            caption,
-            delay
-        });
+        const contacts = await parseContactsFile(contactsInput.files[0]);
+        const filePath = fileInput.files[0].path;
 
-        log.innerHTML += `<div class="log-entry success">✅ Completed! Sent: ${result.sent}, Failed: ${result.failed}</div>`;
-        
-        // Update stats
-        document.getElementById('filesSent').textContent = parseInt(document.getElementById('filesSent').textContent) + result.sent;
-        
+        showProgress('Sending files...', 0, contacts.length);
+
+        let sent = 0;
+        let failed = 0;
+
+        for (let i = 0; i < contacts.length; i++) {
+            try {
+                const number = formatPhoneNumber(contacts[i]);
+                const media = MessageMedia.fromFilePath(filePath);
+                await whatsappClient.sendMessage(number, media);
+                sent++;
+                
+                showProgress(`Sending files... (${sent}/${contacts.length})`, sent, contacts.length);
+                addToHistory('file', number, 'success');
+                
+                if (i < contacts.length - 1) {
+                    await sleep(delay);
+                }
+                
+            } catch (error) {
+                console.error('Failed to send file to:', contacts[i], error);
+                failed++;
+                addToHistory('file', contacts[i], 'failed');
+            }
+        }
+
+        hideProgress();
+        showSuccessMessage(`Files sent! Success: ${sent}, Failed: ${failed}`);
+        updateStats();
+
     } catch (error) {
-        log.innerHTML += `<div class="log-entry failed">❌ Error: ${error.message}</div>`;
-    } finally {
-        document.getElementById('sendFilesBtn').disabled = false;
+        hideProgress();
+        showErrorMessage('Error sending files: ' + error.message);
     }
-});
+}
 
-// Progress updates
-ipcRenderer.on('send-progress', (event, data) => {
-    const { current, total, sent, failed, contact, status, error } = data;
+// Utility Functions
+async function parseContactsFile(file) {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        
+        reader.onload = (e) => {
+            try {
+                const text = e.target.result;
+                const lines = text.split('\n');
+                const contacts = [];
+                
+                for (let i = 1; i < lines.length; i++) {
+                    const line = lines[i].trim();
+                    if (line) {
+                        const number = line.split(',')[0].trim();
+                        if (number && number.match(/^\d+$/)) {
+                            contacts.push(number);
+                        }
+                    }
+                }
+                
+                resolve(contacts);
+            } catch (error) {
+                reject(error);
+            }
+        };
+        
+        reader.onerror = reject;
+        reader.readAsText(file);
+    });
+}
+
+function formatPhoneNumber(number) {
+    // Remove any non-digit characters
+    let cleaned = number.replace(/\D/g, '');
     
-    // Update progress bar
-    const percentage = (current / total) * 100;
-    const progressBar = document.getElementById('messageProgressBar') || document.getElementById('fileProgressBar');
-    progressBar.style.width = percentage + '%';
-    progressBar.textContent = Math.round(percentage) + '%';
+    // Add country code if not present
+    if (!cleaned.startsWith('91') && cleaned.length === 10) {
+        cleaned = '91' + cleaned;
+    }
     
-    // Update stats
-    document.getElementById('msgSent').textContent = sent;
-    document.getElementById('msgFailed').textContent = failed;
-    document.getElementById('msgTotal').textContent = total;
+    return cleaned + '@c.us';
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function addToHistory(type, contact, status) {
+    messageHistory.push({
+        type,
+        contact,
+        status,
+        timestamp: new Date()
+    });
     
-    document.getElementById('fileSent').textContent = sent;
-    document.getElementById('fileFailed').textContent = failed;
-    document.getElementById('fileTotal').textContent = total;
+    // Keep only last 100 entries
+    if (messageHistory.length > 100) {
+        messageHistory.shift();
+    }
     
-    // Update log
-    const log = document.getElementById('messageLog') || document.getElementById('fileLog');
-    const logEntry = document.createElement('div');
-    logEntry.className = `log-entry ${status}`;
-    logEntry.textContent = `${status === 'success' ? '✅' : '❌'} ${contact} - ${status === 'success' ? 'Sent' : error}`;
-    log.appendChild(logEntry);
-    log.scrollTop = log.scrollHeight;
-});
+    updateHistoryView();
+}
+
+function updateHistoryView() {
+    const historyList = document.getElementById('history-list');
+    if (!historyList) return;
+    
+    historyList.innerHTML = messageHistory
+        .slice(-20)
+        .reverse()
+        .map(item => `
+            <div class="history-item ${item.status}">
+                <i class="fas fa-${item.type === 'message' ? 'comment' : 'file'}"></i>
+                <span>${item.contact}</span>
+                <span class="status">${item.status}</span>
+                <span class="time">${item.timestamp.toLocaleTimeString()}</span>
+            </div>
+        `)
+        .join('');
+}
+
+function updateStats() {
+    const totalSent = messageHistory.filter(h => h.status === 'success').length;
+    const totalFailed = messageHistory.filter(h => h.status === 'failed').length;
+    
+    document.getElementById('total-sent').textContent = totalSent;
+    document.getElementById('total-failed').textContent = totalFailed;
+    document.getElementById('success-rate').textContent = 
+        totalSent > 0 ? Math.round((totalSent / (totalSent + totalFailed)) * 100) + '%' : '0%';
+}
+
+function showProgress(message, current, total) {
+    const modal = document.getElementById('progress-modal');
+    const text = document.getElementById('progress-text');
+    const bar = document.getElementById('progress-bar');
+    
+    text.textContent = message;
+    bar.style.width = ((current / total) * 100) + '%';
+    modal.style.display = 'flex';
+}
+
+function hideProgress() {
+    document.getElementById('progress-modal').style.display = 'none';
+}
+
+function showSuccessMessage(message) {
+    showNotification(message, 'success');
+}
+
+function showErrorMessage(message) {
+    showNotification(message, 'error');
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = `
+        <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i>
+        <span>${message}</span>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
 
 // Logout
-document.getElementById('logoutBtn').addEventListener('click', async () => {
-    if (confirm('Are you sure you want to logout?')) {
-        await ipcRenderer.invoke('logout');
+function logout() {
+    if (whatsappClient) {
+        whatsappClient.destroy();
     }
-});
+    isConnected = false;
+    updateConnectionStatus('Disconnected');
+    initializeWhatsApp();
+}
+
+// Event Listeners
+document.getElementById('send-messages-btn')?.addEventListener('click', sendBulkMessages);
+document.getElementById('send-files-btn')?.addEventListener('click', sendBulkFiles);
+document.getElementById('logout-btn')?.addEventListener('click', logout);
