@@ -2,12 +2,59 @@
   "name": "whatsapp-bulk-sender",
   "version": "1.0.0",
   "description": "WhatsApp Bulk Messaging Tool - Send messages, APKs, and files to multiple contacts",
-  "main": "src/index.js",
+  "main": "electron-main.js",
   "scripts": {
-    "start": "node src/index.js",
+    "start": "electron .",
+    "build": "electron-builder",
+    "build:win": "electron-builder --win",
+    "build:mac": "electron-builder --mac",
+    "build:linux": "electron-builder --linux",
     "send-message": "node src/sender.js message",
-    "send-file": "node src/sender.js file",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "send-file": "node src/sender.js file"
+  },
+  "build": {
+    "appId": "com.whatsapp.bulksender",
+    "productName": "WhatsApp Bulk Sender",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "electron-main.js",
+      "desktop/**/*",
+      "node_modules/**/*",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "assets/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "WhatsApp Bulk Sender"
+    },
+    "mac": {
+      "target": "dmg",
+      "icon": "assets/icon.icns",
+      "category": "public.app-category.productivity"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "assets/icon.png",
+      "category": "Utility"
+    }
   },
   "keywords": [
     "whatsapp",
@@ -15,12 +62,15 @@
     "messaging",
     "automation",
     "whatsapp-web",
-    "bulk-sender"
+    "bulk-sender",
+    "electron",
+    "desktop-app"
   ],
   "author": "Shree Kishan Mishra",
   "license": "MIT",
   "dependencies": {
     "whatsapp-web.js": "^1.23.0",
+    "qrcode": "^1.5.3",
     "qrcode-terminal": "^0.12.0",
     "csv-parser": "^3.0.0",
     "xlsx": "^0.18.5",
@@ -30,6 +80,8 @@
     "ora": "^5.4.1"
   },
   "devDependencies": {
+    "electron": "^28.0.0",
+    "electron-builder": "^24.9.1",
     "nodemon": "^3.0.1"
   },
   "engines": {
