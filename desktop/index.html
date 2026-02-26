@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Bulk Sender</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fab fa-whatsapp"></i>
+                <h2>Bulk Sender</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-tab="dashboard">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="send-message">
+                    <i class="fas fa-paper-plane"></i>
+                    <span>Send Messages</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="send-file">
+                    <i class="fas fa-file-upload"></i>
+                    <span>Send Files</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </a>
+                <a href="#" class="nav-item" data-tab="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </a>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="logoutBtn" class="btn-logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="header">
+                <h1 id="pageTitle">Dashboard</h1>
+                <div class="status-indicator">
+                    <span class="status-dot" id="statusDot"></span>
+                    <span id="statusText">Connecting...</span>
+                </div>
+            </header>
+
+            <!-- Dashboard Tab -->
+            <div class="tab-content active" id="dashboard">
+                <div class="qr-section" id="qrSection">
+                    <div class="qr-card">
+                        <h2>Connect WhatsApp</h2>
+                        <p>Scan the QR code with your WhatsApp mobile app</p>
+                        <div id="qrCode" class="qr-placeholder">
+                            <i class="fas fa-qrcode"></i>
+                            <p>Waiting for QR code...</p>
+                        </div>
+                        <div class="qr-instructions">
+                            <p><strong>How to scan:</strong></p>
+                            <ol>
+                                <li>Open WhatsApp on your phone</li>
+                                <li>Go to Settings → Linked Devices</li>
+                                <li>Tap "Link a Device"</li>
+                                <li>Scan this QR code</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="dashboard-content" id="dashboardContent" style="display: none;">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <i class="fas fa-paper-plane"></i>
+                            <div class="stat-info">
+                                <h3 id="totalSent">0</h3>
+                                <p>Messages Sent</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="stat-info">
+                                <h3 id="successRate">0%</h3>
+                                <p>Success Rate</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-users"></i>
+                            <div class="stat-info">
+                                <h3 id="totalContacts">0</h3>
+                                <p>Total Contacts</p>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <i class="fas fa-file"></i>
+                            <div class="stat-info">
+                                <h3 id="filesSent">0</h3>
+                                <p>Files Sent</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="welcome-section">
+                        <h2>Welcome to WhatsApp Bulk Sender! 🎉</h2>
+                        <p>Your WhatsApp is now connected. Choose an option from the sidebar to get started.</p>
+                        <div class="quick-actions">
+                            <button class="btn btn-primary" onclick="switchTab('send-message')">
+                                <i class="fas fa-paper-plane"></i> Send Messages
+                            </button>
+                            <button class="btn btn-secondary" onclick="switchTab('send-file')">
+                                <i class="fas fa-file-upload"></i> Send Files
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Send Message Tab -->
+            <div class="tab-content" id="send-message">
+                <div class="form-container">
+                    <div class="form-card">
+                        <h2><i class="fas fa-paper-plane"></i> Send Bulk Messages</h2>
+                        
+                        <div class="form-group">
+                            <label>Contact List (CSV)</label>
+                            <div class="file-input-wrapper">
+                                <button class="btn btn-secondary" id="selectCsvBtn">
+                                    <i class="fas fa-file-csv"></i> Select CSV File
+                                </button>
+                                <span id="csvFileName">No file selected</span>
+                            </div>
+                            <small>CSV should have a column named 'phone' or 'number'</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Message</label>
+                            <textarea id="messageText" rows="6" placeholder="Enter your message here..."></textarea>
+                            <small id="charCount">0 characters</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Delay Between Messages (seconds)</label>
+                            <input type="number" id="messageDelay" value="5" min="3" max="30">
+                            <small>Recommended: 5-10 seconds to avoid rate limiting</small>
+                        </div>
+
+                        <div class="contacts-preview" id="contactsPreview" style="display: none;">
+                            <h3>Contacts Loaded: <span id="contactCount">0</span></h3>
+                            <div id="contactsList"></div>
+                        </div>
+
+                        <button class="btn btn-primary btn-large" id="sendMessagesBtn" disabled>
+                            <i class="fas fa-paper-plane"></i> Send Messages
+                        </button>
+                    </div>
+
+                    <div class="progress-card" id="messageProgress" style="display: none;">
+                        <h3>Sending Progress</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="messageProgressBar"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span>Sent: <strong id="msgSent">0</strong></span>
+                            <span>Failed: <strong id="msgFailed">0</strong></span>
+                            <span>Total: <strong id="msgTotal">0</strong></span>
+                        </div>
+                        <div class="progress-log" id="messageLog"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Send File Tab -->
+            <div class="tab-content" id="send-file">
+                <div class="form-container">
+                    <div class="form-card">
+                        <h2><i class="fas fa-file-upload"></i> Send Bulk Files</h2>
+                        
+                        <div class="form-group">
+                            <label>Contact List (CSV)</label>
+                            <div class="file-input-wrapper">
+                                <button class="btn btn-secondary" id="selectCsvBtnFile">
+                                    <i class="fas fa-file-csv"></i> Select CSV File
+                                </button>
+                                <span id="csvFileNameFile">No file selected</span>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>File to Send</label>
+                            <div class="file-input-wrapper">
+                                <button class="btn btn-secondary" id="selectFileBtn">
+                                    <i class="fas fa-file"></i> Select File
+                                </button>
+                                <span id="selectedFileName">No file selected</span>
+                            </div>
+                            <small>Supported: APK, PDF, Images, Documents, etc.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Caption (Optional)</label>
+                            <textarea id="fileCaption" rows="3" placeholder="Enter caption for the file..."></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Delay Between Sends (seconds)</label>
+                            <input type="number" id="fileDelay" value="7" min="5" max="30">
+                            <small>Recommended: 7-10 seconds for files</small>
+                        </div>
+
+                        <button class="btn btn-primary btn-large" id="sendFilesBtn" disabled>
+                            <i class="fas fa-file-upload"></i> Send Files
+                        </button>
+                    </div>
+
+                    <div class="progress-card" id="fileProgress" style="display: none;">
+                        <h3>Sending Progress</h3>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="fileProgressBar"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span>Sent: <strong id="fileSent">0</strong></span>
+                            <span>Failed: <strong id="fileFailed">0</strong></span>
+                            <span>Total: <strong id="fileTotal">0</strong></span>
+                        </div>
+                        <div class="progress-log" id="fileLog"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Tab -->
+            <div class="tab-content" id="history">
+                <div class="history-container">
+                    <h2>Send History</h2>
+                    <p>Coming soon...</p>
+                </div>
+            </div>
+
+            <!-- Settings Tab -->
+            <div class="tab-content" id="settings">
+                <div class="settings-container">
+                    <h2>Settings</h2>
+                    <div class="form-card">
+                        <div class="form-group">
+                            <label>Default Country Code</label>
+                            <input type="text" value="+91" id="countryCode">
+                        </div>
+                        <div class="form-group">
+                            <label>Max Messages Per Day</label>
+                            <input type="number" value="200" id="maxMessages">
+                        </div>
+                        <button class="btn btn-primary">Save Settings</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="renderer.js"></script>
+</body>
+</html>
